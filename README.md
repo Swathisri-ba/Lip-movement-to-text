@@ -1,22 +1,6 @@
-# Lip movement to text
-
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/swathisriba2023-9012s-projects/v0-lip-movement-to-text)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/m25LeCPP2Ph)
-
-## Overview
 
 **Lip movement to text** converts silent lip movements from video into text.  
 This repo contains the code and deployment configuration for the web app and stays synced with the project on v0.app for easy development and deployment.
-
-## Live demo
-
-The project is live here:
-
-**https://vercel.com/swathisriba2023-9012s-projects/v0-lip-movement-to-text**
-
-You can continue development and test changes from:
-
-**https://v0.app/chat/m25LeCPP2Ph**
 
 ## Features
 
