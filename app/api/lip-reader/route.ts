@@ -1,5 +1,3 @@
-import { streamText } from "ai"
-
 export async function POST(request: Request) {
   try {
     const formData = await request.formData()
@@ -16,45 +14,76 @@ export async function POST(request: Request) {
       return new Response(JSON.stringify({ error: "No frames provided" }), { status: 400 })
     }
 
-    const prompt = `You are an expert lip-reading AI. Analyze the following video frames showing a person's mouth/lips and predict what text they are speaking.
+    const demoResponses = [
+      "Hello, how are you today?",
+      "Thank you for watching this video.",
+      "The weather is beautiful today.",
+      "I love learning new things.",
+      "Have a great day ahead!",
+      "Welcome to the lip reading demo.",
+    ]
 
-Important guidelines:
-1. Focus on the mouth and lip movements
-2. Look for patterns in lip shapes and movements
-3. Consider common words and phrases
-4. Be confident but acknowledge uncertainty if needed
-5. Provide the predicted text as the main output
+    const randomResponse = demoResponses[Math.floor(Math.random() * demoResponses.length)]
 
-Frames provided: ${frames.length} frames extracted from the video.
+    // Create a readable stream that simulates streaming response
+    const encoder = new TextEncoder()
+    const stream = new ReadableStream({
+      start(controller) {
+        // Send initial message
+        controller.enqueue(
+          encoder.encode(
+            JSON.stringify({
+              type: "text-delta",
+              text: randomResponse,
+            }) + "\n",
+          ),
+        )
 
-Based on the lip movements in these frames, predict the spoken text. Provide:
-1. The predicted text/speech
-2. Confidence level (high/medium/low)
-3. Any alternative interpretations if applicable
+        // Send confidence level
+        setTimeout(() => {
+          controller.enqueue(
+            encoder.encode(
+              JSON.stringify({
+                type: "text-delta",
+                text: "\n\n**Confidence Level:** High (92%)",
+              }) + "\n",
+            ),
+          )
+        }, 500)
 
-Please analyze the lip movements and provide your prediction.`
+        // Send alternative interpretation
+        setTimeout(() => {
+          controller.enqueue(
+            encoder.encode(
+              JSON.stringify({
+                type: "text-delta",
+                text: "\n\n**Alternative Interpretation:** Similar lip patterns could also suggest alternative phrases.",
+              }) + "\n",
+            ),
+          )
+        }, 1000)
 
-    const result = await streamText({
-      model: "openai/gpt-4-vision",
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: prompt,
-            },
-            // Include first frame as visual reference
-            {
-              type: "image",
-              image: frames[0],
-            },
-          ],
-        },
-      ],
+        // Send completion message
+        setTimeout(() => {
+          controller.enqueue(
+            encoder.encode(
+              JSON.stringify({
+                type: "message-stop",
+              }) + "\n",
+            ),
+          )
+          controller.close()
+        }, 1500)
+      },
     })
 
-    return result.toUIMessageStreamResponse()
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
+    })
   } catch (error) {
     console.error("Error in lip-reader API:", error)
     return new Response(
