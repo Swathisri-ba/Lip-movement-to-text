@@ -109,12 +109,11 @@ export default function ResultsDisplay({ videoBlob, onProcessingChange }: Result
         buffer = lines.pop() || ""
 
         for (const line of lines) {
-          if (line.startsWith("0:")) {
-            const content = line.slice(2)
+          if (line.trim()) {
             try {
-              const parsed = JSON.parse(content)
+              const parsed = JSON.parse(line)
               if (parsed.type === "text-delta") {
-                setResults((prev) => prev + parsed.delta)
+                setResults((prev) => prev + parsed.text)
               }
             } catch {
               // Skip parsing errors
