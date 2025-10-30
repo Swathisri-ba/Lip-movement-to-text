@@ -1,4 +1,3 @@
-import { openai } from "@ai-sdk/openai"
 import { streamText } from "ai"
 
 export async function POST(request: Request) {
@@ -36,7 +35,7 @@ Based on the lip movements in these frames, predict the spoken text. Provide:
 Please analyze the lip movements and provide your prediction.`
 
     const result = await streamText({
-      model: openai("gpt-4o"),
+      model: "openai/gpt-4-vision",
       messages: [
         {
           role: "user",
